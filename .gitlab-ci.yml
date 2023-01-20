@@ -1,0 +1,79 @@
+stages:
+  - quality-assurance
+  - testing
+  - documentation
+  - deploy
+
+
+# Cache pip
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+  paths:
+    - .cache/pip
+
+linters:
+  image: python:3.9
+  stage: quality-assurance
+  before_script:
+    - pip install tox
+  script:
+    - tox -e linters
+
+  # Be nice to new contributors, but please use `tox` before commit
+  allow_failure: true
+
+tests-py37:
+  image: python:3.7
+  stage: testing
+  before_script:
+    - pip install tox
+  script:
+    - tox -e tests
+
+tests-py38:
+  image: python:3.8
+  stage: testing
+  before_script:
+    - pip install tox
+  script:
+    - tox -e tests
+
+tests-py39:
+  image: python:3.9
+  stage: testing
+  before_script:
+    - pip install tox
+  script:
+    - tox -e tests
+  artifacts:
+    reports:
+      cobertura: coverage.xml
+    paths:
+      - htmlcov
+
+docs:
+  image: python:3.9
+  stage: documentation
+  before_script:
+    - pip install tox
+    - apt-get update && apt-get install -y graphviz
+  script:
+    - tox -e docs
+    - mv docs/_build/html public
+  artifacts:
+    paths:
+      - public
+
+deploy:
+  image: python:3.9
+  stage: deploy
+  before_script:
+    - pip install build twine
+  script:
+    - python -m build
+    - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --repository-url https://gitlab.science.ru.nl/api/v4/projects/${CI_PROJECT_ID}/packages/pypi dist/*
+  artifacts:
+    paths:
+      - dist/*.whl

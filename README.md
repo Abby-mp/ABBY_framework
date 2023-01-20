@@ -1,2 +1,22 @@
-# ABBY_framework
-ABBY- Framework for CM0
+# Abby Framework
+
+Abby is a framework to build side channel models and evaluate them.
+
+## User guide
+
+The user guide is available in Abby_documentation folder 
+
+
+## Contributing
+
+See [contributing guidelines](./CONTRIBUTING.md).
+
+## Authors
+
+Abby is developed as a research ...
+
+## License
+
+We believe in open source.
+Abby is licensed under the permissive Apache 2.0 license,
+so you can use it in both commercial and personal projects with confidence.
